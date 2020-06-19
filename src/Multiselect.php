@@ -20,6 +20,17 @@ class Multiselect extends Field
      **/
     public function options($options = [])
     {
+
+$options = [
+                  'liverpool' => 'Liverpool FC',
+                  'tottenham' => 'Tottenham Hotspur',
+                  'bvb' => 'Borussia Dortmund',
+                  'bayern' => 'FC Bayern Munich',
+                  'barcelona' => 'FC Barcelona',
+                  'juventus' => 'Juventus FC',
+                  'psg' => 'Paris Saint-Germain FC',
+                ];
+
         if (is_callable($options)) $options = call_user_func($options);
         $options = collect($options ?? []);
 
