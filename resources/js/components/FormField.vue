@@ -151,7 +151,7 @@ export default {
     },
 
     loadInitialValueFromRelationship() {
-        let baseUrl = '/nova-vendor/nova-attach-many/';
+        let baseUrl = '/nova-vendor/nova-multiselect/';
         if (this.resourceId) {
           Nova.request(baseUrl + this.resourceName + '/' + this.resourceId + '/attachable/' + this.field.attribute)
             .then((data) => {
