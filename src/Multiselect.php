@@ -4,6 +4,10 @@ namespace OptimistDigital\MultiselectField;
 
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Fields\ResourceRelationshipGuesser;
+use Illuminate\Http\Request;
+use Auth;
+use App\User;
 
 class Multiselect extends Field
 {
@@ -11,6 +15,8 @@ class Multiselect extends Field
 
     protected $pageResponseResolveCallback;
     protected $saveAsJSON = false;
+
+    protected $fromRelationship = false;
 
     /**
      * Sets the options available for select.
@@ -20,17 +26,6 @@ class Multiselect extends Field
      **/
     public function options($options = [])
     {
-
-$options = [
-                  'liverpool' => 'Liverpool FC',
-                  'tottenham' => 'Tottenham Hotspur',
-                  'bvb' => 'Borussia Dortmund',
-                  'bayern' => 'FC Bayern Munich',
-                  'barcelona' => 'FC Barcelona',
-                  'juventus' => 'Juventus FC',
-                  'psg' => 'Paris Saint-Germain FC',
-                ];
-
         if (is_callable($options)) $options = call_user_func($options);
         $options = collect($options ?? []);
 
@@ -66,12 +61,24 @@ $options = [
         $singleSelect = $this->meta['singleSelect'] ?? false;
         $value = data_get($resource, str_replace('->', '.', $attribute));
 
-        if ($this->saveAsJSON || $singleSelect) return $value;
+        if ($this->saveAsJSON || $singleSelect || $this->fromRelationship) return $value;
         return is_array($value) || is_object($value) ? (array) $value : json_decode($value);
     }
 
     protected function fillAttributeFromRequest(NovaRequest $request, $requestAttribute, $model, $attribute)
     {
+        if ($this->fromRelationship) {
+            $value = json_decode($request->input($requestAttribute));
+            $attach = collect($value->attach);
+            $detach = collect($value->detach);
+            $model::saved(function ($model) use ($attribute, $attach, $detach) {
+                $model->$attribute()->syncWithoutDetaching($attach);
+                $model->$attribute()->detach($detach);
+            });
+            unset($request->$attribute);
+            return;
+        }
+
         $singleSelect = $this->meta['singleSelect'] ?? false;
         $value = $request->input($requestAttribute) ?? null;
 
@@ -199,4 +206,52 @@ $options = [
         $this->pageResponseResolveCallback = $resolveCallback;
         return $this;
     }
+
+    /**
+     * Use relationship to populate options.
+     *
+     * @param  string  $resource
+     * @return \OptimistDigital\MultiselectField\Multiselect
+     **/
+    public function fromRelationship($resource)
+    {
+        $this->fromRelationship = true;
+        $this->resource = $resource;
+        $this->resourceClass = $resource;
+        $this->resourceName = $resource::uriKey();
+        $this->manyToManyRelationship = $this->attribute;
+        return $this->withMeta(['fromRelationship' => true]);
+    }
+
+    /**
+     * Group related model in the options list.
+     *
+     * @param bool $groupRelations
+     * @return \OptimistDigital\MultiselectField\Multiselect
+     **/
+    public function groupRelations($groupRelations = true)
+    {
+        return $this->withMeta(['groupRelations' => $groupRelations]);
+    }
+
+    /**
+     * Determine if the field should be displayed for the given request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    public function authorize(Request $request)
+    {
+        $authorized = true;
+        if ($this->fromRelationship) {
+            if ($request->isCreateOrAttachRequest() || $request->isUpdateOrUpdateAttachedRequest()) {
+                $relatedResourceName = class_basename($this->resourceClass);
+                $parentResourceClass = $request->resource();
+                $parentModelClass = $parentResourceClass::$model;
+                $authorized = Auth::user()->can("attachAny$relatedResourceName", $parentModelClass);
+            }
+        }
+        return $authorized && parent::authorize($request);
+    }
+
 }

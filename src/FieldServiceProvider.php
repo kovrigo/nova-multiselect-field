@@ -16,6 +16,12 @@ class FieldServiceProvider extends ServiceProvider
             Nova::style('multiselect-field', __DIR__ . '/../dist/css/multiselect-field.css');
         });
 
+        $this->app->booted(function () {
+            \Route::middleware(['nova'])
+                ->prefix('nova-vendor/nova-multiselect')
+                ->group(__DIR__.'/../../routes/api.php');
+        });
+
         $this->publishes([__DIR__ . '/../resources/lang' => resource_path('lang/vendor/nova-multiselect')], 'translations');
 
         if (method_exists('Nova', 'translations')) {

@@ -55,7 +55,7 @@ export default {
     },
 
     isOptionGroups() {
-      return !!this.field.options && !!this.field.options.find(opt => opt.values && Array.isArray(opt.values));
+      return !!this.field.groupRelations || !!this.field.options && !!this.field.options.find(opt => opt.values && Array.isArray(opt.values));
     },
 
     computedOptions() {

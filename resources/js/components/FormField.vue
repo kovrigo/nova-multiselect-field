@@ -1,5 +1,5 @@
 <template>
-  <default-field :field="field" :errors="errors">
+  <default-field :field="field" :errors="errors" :full-width-content="field.stacked">
     <template slot="field">
       <div class="flex flex-col">
         <!-- Multi select field -->
@@ -138,6 +138,10 @@ export default {
 
   methods: {
     setInitialValue() {
+      if (this.field.fromRelationship) {
+        this.loadInitialValueFromRelationship();
+        return;
+      }
       if (this.isMultiselect) {
         const valuesArray = this.getInitialFieldValuesArray();
         this.value = valuesArray && valuesArray.length ? valuesArray.map(this.getValueFromOptions).filter(Boolean) : [];
@@ -146,7 +150,63 @@ export default {
       }
     },
 
+    loadInitialValueFromRelationship() {
+        let baseUrl = '/nova-vendor/nova-attach-many/';
+        if (this.resourceId) {
+          Nova.request(baseUrl + this.resourceName + '/' + this.resourceId + '/attachable/' + this.field.attribute)
+            .then((data) => {
+              var self = this;
+              if (this.field.groupRelations) {
+                let options = _.groupBy(data.data.available, function (option) {
+                  return option.group;
+                });
+                options = _.map(options, function (options, group) {
+                  return {
+                    label: group,
+                    values: options
+                  };
+                });
+                this.options = options;
+              } else {
+                this.options = data.data.available || [];
+              }
+              this.value = _.map(data.data.selected, function (value) {
+                return _.clone(_.find(data.data.available, ['value', value]));
+              });
+            });
+        }
+        else {
+          Nova.request(baseUrl + this.resourceName + '/attachable/' + this.field.attribute)
+            .then((data) => {
+              this.options = data.data.available || [];
+            });
+        }
+    },
+
     fill(formData) {
+      if (this.field.fromRelationship) {
+        let options;        
+        if (this.field.groupRelations) {
+          options = _.flatMap(this.options, function (option) {
+            return _.map(option.values, 'value');
+          });
+        } else {
+          options = _.map(this.options, function (option) {
+            return option.value;
+          });
+        }
+        let selected = _.map(this.value, function (option) {
+            return option.value;
+        });
+        let xored = _.xor(options, selected);
+        let data = {
+          'attach': selected,
+          'detach': xored,
+        };
+        formData.append(this.field.attribute, JSON.stringify(data));
+        return;
+      }
+
       if (this.isMultiselect) {
         if (this.value && this.value.length) {
           this.value.forEach((v, i) => {
