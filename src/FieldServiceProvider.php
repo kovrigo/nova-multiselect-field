@@ -19,7 +19,7 @@ class FieldServiceProvider extends ServiceProvider
         $this->app->booted(function () {
             \Route::middleware(['nova'])
                 ->prefix('nova-vendor/nova-multiselect')
-                ->group(__DIR__.'/../../routes/api.php');
+                ->group(__DIR__.'/../routes/api.php');
         });
 
         $this->publishes([__DIR__ . '/../resources/lang' => resource_path('lang/vendor/nova-multiselect')], 'translations');
