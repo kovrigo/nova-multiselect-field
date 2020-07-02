@@ -152,8 +152,9 @@ export default {
 
     loadInitialValueFromRelationship() {
         let baseUrl = '/nova-vendor/nova-multiselect/';
+        let queryParams = '?multiselect-resource=' + _.toString(this.resourceName) + '&multiselect-resource-id=' + _.toString(this.resourceId) + '&multiselect-via-resource=' + _.toString(this.viaResource) + '&multiselect-via-resource-id=' + _.toString(this.viaResourceId);
         if (this.resourceId) {
-          Nova.request(baseUrl + this.resourceName + '/' + this.resourceId + '/attachable/' + this.field.attribute)
+          Nova.request(baseUrl + this.resourceName + '/' + this.resourceId + '/attachable/' + this.field.attribute + queryParams)
             .then((data) => {
               var self = this;
               if (this.field.groupRelations) {
@@ -176,7 +177,7 @@ export default {
             });
         }
         else {
-          Nova.request(baseUrl + this.resourceName + '/attachable/' + this.field.attribute)
+          Nova.request(baseUrl + this.resourceName + '/attachable/' + this.field.attribute + queryParams)
             .then((data) => {
               this.options = data.data.available || [];
             });
