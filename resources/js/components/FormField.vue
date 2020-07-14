@@ -156,21 +156,7 @@ export default {
         if (this.resourceId) {
           Nova.request(baseUrl + this.resourceName + '/' + this.resourceId + '/attachable/' + this.field.attribute + queryParams)
             .then((data) => {
-              var self = this;
-              if (this.field.groupRelations) {
-                let options = _.groupBy(data.data.available, function (option) {
-                  return option.group;
-                });
-                options = _.map(options, function (options, group) {
-                  return {
-                    label: group,
-                    values: options
-                  };
-                });
-                this.options = options;
-              } else {
-                this.options = data.data.available || [];
-              }
+              this.fillOptionsFromRelationship(data);
               this.value = _.map(data.data.selected, function (value) {
                 return _.clone(_.find(data.data.available, ['value', value]));
               });
@@ -179,9 +165,27 @@ export default {
         else {
           Nova.request(baseUrl + this.resourceName + '/attachable/' + this.field.attribute + queryParams)
             .then((data) => {
-              this.options = data.data.available || [];
+              this.fillOptionsFromRelationship(data);
             });
         }
+    },
+
+    fillOptionsFromRelationship(data) {
+      var self = this;
+      if (this.field.groupRelations) {
+        let options = _.groupBy(data.data.available, function (option) {
+          return option.group;
+        });
+        options = _.map(options, function (options, group) {
+          return {
+            label: group,
+            values: options
+          };
+        });
+        this.options = options;
+      } else {
+        this.options = data.data.available || [];
+      }
     },
 
     fill(formData) {
