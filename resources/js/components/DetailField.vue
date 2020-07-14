@@ -1,7 +1,12 @@
 <template>
   <panel-item :field="field">
     <template slot="value">
-      <nova-multiselect-detail-field-value v-if="isMultiselect" :field="field" :values="values" />
+      <nova-multiselect-detail-field-value v-if="isMultiselect" 
+        :field="field" 
+        :values="values" 
+        :from-relationship="field.fromRelationship"
+        :group-relations="field.groupRelations"
+      />
       <div v-else>{{ (value && value.label) || '—' }}</div>
     </template>
   </panel-item>
@@ -33,9 +38,18 @@ export default {
         let queryParams = '?multiselect-resource=' + _.toString(this.resourceName) + '&multiselect-resource-id=' + _.toString(this.resourceId) + '&multiselect-via-resource=' + _.toString(this.viaResource) + '&multiselect-via-resource-id=' + _.toString(this.viaResourceId);
         Nova.request(baseUrl + this.resourceName + '/' + this.resourceId + '/attachable/' + this.field.attribute + queryParams)
           .then((data) => {
-            this.relationshipValues = _.map(data.data.selected, function (value) {
-              return _.clone(_.find(data.data.available, ['value', value])).label;
-            });
+            if (this.field.groupRelations) {
+              let relationshipValues = _.map(data.data.selected, function (value) {
+                return _.clone(_.find(data.data.available, ['value', value]));
+              });
+              this.relationshipValues = _.groupBy(relationshipValues, function (value) {
+                return value.group;
+              });
+            } else {
+              this.relationshipValues = _.map(data.data.selected, function (value) {
+                return _.clone(_.find(data.data.available, ['value', value])).label;
+              });
+            }
           });
       },
 
