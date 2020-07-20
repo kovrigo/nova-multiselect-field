@@ -17,6 +17,7 @@ class Multiselect extends Field
     protected $saveAsJSON = false;
 
     protected $fromRelationship = false;
+    protected $reorderable = false;
 
     /**
      * Sets the options available for select.
@@ -69,11 +70,19 @@ class Multiselect extends Field
     {
         if ($this->fromRelationship) {
             $value = json_decode($request->input($requestAttribute));
-            $attach = collect($value->attach);
-            $detach = collect($value->detach);
-            $model::saved(function ($model) use ($attribute, $attach, $detach) {
+            $attach = $value->attach;
+            $detach = $value->detach;
+            $reorderable = $this->reorderable;
+            $model::saved(function ($model) use ($attribute, $attach, $detach, $reorderable) {
                 $model->$attribute()->syncWithoutDetaching($attach);
                 $model->$attribute()->detach($detach);
+                if ($reorderable) {
+                    foreach ($attach as $id) {
+                        $model->$attribute()->updateExistingPivot($id, [
+                            'sort_order' => array_search($id, $attach),
+                        ]);
+                    }
+                }
             });
             unset($request->$attribute);
             return;
@@ -142,6 +151,7 @@ class Multiselect extends Field
      **/
     public function reorderable($reorderable = true)
     {
+        $this->reorderable = $reorderable;
         return $this->withMeta(['reorderable' => $reorderable]);
     }
 
