@@ -253,6 +253,7 @@ class Multiselect extends Field
     public function authorize(Request $request)
     {
         $authorized = true;
+        /*
         if ($this->fromRelationship) {
             if ($request->isCreateOrAttachRequest() || $request->isUpdateOrUpdateAttachedRequest()) {
                 $relatedResourceName = class_basename($this->resourceClass);
@@ -261,6 +262,7 @@ class Multiselect extends Field
                 $authorized = Auth::user()->can("attachAny$relatedResourceName", $parentModelClass);
             }
         }
+        */
         return $authorized && parent::authorize($request);
     }
 
