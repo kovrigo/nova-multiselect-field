@@ -38,7 +38,7 @@ class AttachController extends Controller
         return $field->resourceClass::relatableQuery($request, $query)->get()
             ->mapInto($field->resourceClass)
             ->filter(function ($resource) use ($request, $field) {
-                return $request->newResource()->authorizedToAttach($request, $resource->resource);
+                return true;//$request->newResource()->authorizedToAttach($request, $resource->resource);
             })->map(function($resource) {
                 return [
                     'label' => $resource->title(),
