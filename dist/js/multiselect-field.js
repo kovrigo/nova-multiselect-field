@@ -255,6 +255,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -32424,7 +32425,8 @@ var render = function() {
                       deselectLabel: _vm.__("novaMultiselect.deselectLabel"),
                       deselectGroupLabel: _vm.__(
                         "novaMultiselect.deselectGroupLabel"
-                      )
+                      ),
+                      disabled: _vm.isReadonly
                     },
                     on: {
                       input: _vm.handleChange,

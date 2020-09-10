@@ -28,6 +28,7 @@
           :selectedLabel="__('novaMultiselect.selectedLabel')"
           :deselectLabel="__('novaMultiselect.deselectLabel')"
           :deselectGroupLabel="__('novaMultiselect.deselectGroupLabel')"
+          :disabled="isReadonly"
         >
           <template slot="maxElements">
             {{ __('novaMultiselect.maxElements', { max: field.max }) }}
