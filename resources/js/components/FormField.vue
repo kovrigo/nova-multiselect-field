@@ -1,7 +1,26 @@
 <template>
   <default-field :field="field" :errors="errors" :full-width-content="field.stacked">
     <template slot="field">
-      <div class="flex flex-col">
+      <div v-if="isReadonly" class="flex flex-col multiselect-readonly">
+        <div class="w-full pt-2" v-if="isOptionGroups">
+          <div v-for="(g, label) in readonlyValue">
+            <div class="group-label">{{ label }}</div>
+            <ul class="grouped-list">
+              <li v-for="s in g">
+                {{ s.label }}
+              </li>
+            </ul>            
+          </div>
+        </div>
+        <div class="w-full pt-2" v-else>
+          <ul>
+            <li v-for="s in readonlyValue">
+              {{ s.label }}
+            </li>
+          </ul>          
+        </div>
+      </div>
+      <div class="flex flex-col" v-else>
         <!-- Multi select field -->
         <multiselect
           v-if="!reorderMode"
@@ -135,6 +154,14 @@ export default {
     selected() {
       return this.value || [];
     },
+
+    readonlyValue() {
+      if (this.isOptionGroups) {
+        return _.groupBy(this.selected , 'group');
+      }
+      return this.selected;
+    },
+
   },
 
   methods: {

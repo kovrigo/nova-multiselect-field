@@ -256,6 +256,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -330,6 +349,13 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     selected: function selected() {
       return this.value || [];
+    },
+    readonlyValue: function readonlyValue() {
+      if (this.isOptionGroups) {
+        return _.groupBy(this.selected, 'group');
+      }
+
+      return this.selected;
     }
   },
   methods: {
@@ -526,7 +552,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
 //
 //
 //
@@ -32387,169 +32412,219 @@ var render = function() {
     },
     [
       _c("template", { slot: "field" }, [
-        _c(
-          "div",
-          { staticClass: "flex flex-col" },
-          [
-            !_vm.reorderMode
-              ? _c(
-                  "multiselect",
-                  {
-                    ref: "multiselect",
-                    class: _vm.errorClasses,
-                    attrs: {
-                      "track-by": "value",
-                      label: "label",
-                      "group-label": _vm.isOptionGroups ? "label" : void 0,
-                      "group-values": _vm.isOptionGroups ? "values" : void 0,
-                      "group-select": _vm.field.groupSelect || false,
-                      value: _vm.selected,
-                      options: _vm.computedOptions,
-                      placeholder: _vm.field.placeholder || _vm.field.name,
-                      "close-on-select":
-                        _vm.field.max === 1 || !_vm.isMultiselect,
-                      "clear-on-select": false,
-                      multiple: _vm.isMultiselect,
-                      max: _vm.field.max || null,
-                      optionsLimit: _vm.field.optionsLimit || 1000,
-                      limitText: function(count) {
-                        return _vm.__("novaMultiselect.limitText", {
-                          count: count
-                        })
-                      },
-                      selectLabel: _vm.__("novaMultiselect.selectLabel"),
-                      selectGroupLabel: _vm.__(
-                        "novaMultiselect.selectGroupLabel"
-                      ),
-                      selectedLabel: _vm.__("novaMultiselect.selectedLabel"),
-                      deselectLabel: _vm.__("novaMultiselect.deselectLabel"),
-                      deselectGroupLabel: _vm.__(
-                        "novaMultiselect.deselectGroupLabel"
-                      ),
-                      disabled: _vm.isReadonly
-                    },
-                    on: {
-                      input: _vm.handleChange,
-                      open: function() {
-                        return _vm.repositionDropdown(true)
-                      }
-                    }
-                  },
-                  [
-                    _c("template", { slot: "maxElements" }, [
-                      _vm._v(
-                        "\n          " +
-                          _vm._s(
-                            _vm.__("novaMultiselect.maxElements", {
-                              max: _vm.field.max
-                            })
-                          ) +
-                          "\n        "
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("template", { slot: "noResult" }, [
-                      _vm._v(
-                        "\n          " +
-                          _vm._s(_vm.__("novaMultiselect.noResult")) +
-                          "\n        "
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("template", { slot: "noOptions" }, [
-                      _vm._v(
-                        "\n          " +
-                          _vm._s(_vm.__("novaMultiselect.noOptions")) +
-                          "\n        "
-                      )
-                    ])
-                  ],
-                  2
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            _vm.reorderMode
-              ? _c(
-                  "div",
-                  { staticClass: "form-input-bordered py-1" },
-                  [
+        _vm.isReadonly
+          ? _c("div", { staticClass: "flex flex-col multiselect-readonly" }, [
+              _vm.isOptionGroups
+                ? _c(
+                    "div",
+                    { staticClass: "w-full pt-2" },
+                    _vm._l(_vm.readonlyValue, function(g, label) {
+                      return _c("div", [
+                        _c("div", { staticClass: "group-label" }, [
+                          _vm._v(_vm._s(label))
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "ul",
+                          { staticClass: "grouped-list" },
+                          _vm._l(g, function(s) {
+                            return _c("li", [
+                              _vm._v(
+                                "\n              " +
+                                  _vm._s(s.label) +
+                                  "\n            "
+                              )
+                            ])
+                          }),
+                          0
+                        )
+                      ])
+                    }),
+                    0
+                  )
+                : _c("div", { staticClass: "w-full pt-2" }, [
                     _c(
-                      "vue-draggable",
+                      "ul",
+                      _vm._l(_vm.readonlyValue, function(s) {
+                        return _c("li", [
+                          _vm._v(
+                            "\n            " + _vm._s(s.label) + "\n          "
+                          )
+                        ])
+                      }),
+                      0
+                    )
+                  ])
+            ])
+          : _c(
+              "div",
+              { staticClass: "flex flex-col" },
+              [
+                !_vm.reorderMode
+                  ? _c(
+                      "multiselect",
                       {
-                        staticClass: "flex flex-col pl-0",
-                        staticStyle: {
-                          "list-style": "none",
-                          "margin-top": "5px"
-                        },
-                        attrs: { tag: "ul" },
-                        model: {
-                          value: _vm.value,
-                          callback: function($$v) {
-                            _vm.value = $$v
+                        ref: "multiselect",
+                        class: _vm.errorClasses,
+                        attrs: {
+                          "track-by": "value",
+                          label: "label",
+                          "group-label": _vm.isOptionGroups ? "label" : void 0,
+                          "group-values": _vm.isOptionGroups
+                            ? "values"
+                            : void 0,
+                          "group-select": _vm.field.groupSelect || false,
+                          value: _vm.selected,
+                          options: _vm.computedOptions,
+                          placeholder: _vm.field.placeholder || _vm.field.name,
+                          "close-on-select":
+                            _vm.field.max === 1 || !_vm.isMultiselect,
+                          "clear-on-select": false,
+                          multiple: _vm.isMultiselect,
+                          max: _vm.field.max || null,
+                          optionsLimit: _vm.field.optionsLimit || 1000,
+                          limitText: function(count) {
+                            return _vm.__("novaMultiselect.limitText", {
+                              count: count
+                            })
                           },
-                          expression: "value"
+                          selectLabel: _vm.__("novaMultiselect.selectLabel"),
+                          selectGroupLabel: _vm.__(
+                            "novaMultiselect.selectGroupLabel"
+                          ),
+                          selectedLabel: _vm.__(
+                            "novaMultiselect.selectedLabel"
+                          ),
+                          deselectLabel: _vm.__(
+                            "novaMultiselect.deselectLabel"
+                          ),
+                          deselectGroupLabel: _vm.__(
+                            "novaMultiselect.deselectGroupLabel"
+                          ),
+                          disabled: _vm.isReadonly
+                        },
+                        on: {
+                          input: _vm.handleChange,
+                          open: function() {
+                            return _vm.repositionDropdown(true)
+                          }
                         }
                       },
                       [
+                        _c("template", { slot: "maxElements" }, [
+                          _vm._v(
+                            "\n          " +
+                              _vm._s(
+                                _vm.__("novaMultiselect.maxElements", {
+                                  max: _vm.field.max
+                                })
+                              ) +
+                              "\n        "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("template", { slot: "noResult" }, [
+                          _vm._v(
+                            "\n          " +
+                              _vm._s(_vm.__("novaMultiselect.noResult")) +
+                              "\n        "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("template", { slot: "noOptions" }, [
+                          _vm._v(
+                            "\n          " +
+                              _vm._s(_vm.__("novaMultiselect.noOptions")) +
+                              "\n        "
+                          )
+                        ])
+                      ],
+                      2
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.reorderMode
+                  ? _c(
+                      "div",
+                      { staticClass: "form-input-bordered py-1" },
+                      [
                         _c(
-                          "transition-group",
-                          _vm._l(_vm.selected, function(s) {
-                            return _c(
-                              "li",
-                              {
-                                key: s,
-                                staticClass:
-                                  "reorder__tag text-sm mb-1 px-2 py-1 text-white"
+                          "vue-draggable",
+                          {
+                            staticClass: "flex flex-col pl-0",
+                            staticStyle: {
+                              "list-style": "none",
+                              "margin-top": "5px"
+                            },
+                            attrs: { tag: "ul" },
+                            model: {
+                              value: _vm.value,
+                              callback: function($$v) {
+                                _vm.value = $$v
                               },
-                              [
-                                _vm._v(
-                                  "\n              " +
-                                    _vm._s(s.label) +
-                                    "\n            "
+                              expression: "value"
+                            }
+                          },
+                          [
+                            _c(
+                              "transition-group",
+                              _vm._l(_vm.selected, function(s) {
+                                return _c(
+                                  "li",
+                                  {
+                                    key: s,
+                                    staticClass:
+                                      "reorder__tag text-sm mb-1 px-2 py-1 text-white"
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n              " +
+                                        _vm._s(s.label) +
+                                        "\n            "
+                                    )
+                                  ]
                                 )
-                              ]
+                              }),
+                              0
                             )
-                          }),
-                          0
+                          ],
+                          1
                         )
                       ],
                       1
                     )
-                  ],
-                  1
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            _vm.field.reorderable
-              ? _c(
-                  "div",
-                  {
-                    staticClass:
-                      "ml-auto mt-2 text-sm font-bold text-primary cursor-pointer dim",
-                    on: {
-                      click: function($event) {
-                        _vm.reorderMode = !_vm.reorderMode
-                      }
-                    }
-                  },
-                  [
-                    _vm._v(
-                      "\n        " +
-                        _vm._s(
-                          _vm.__(
-                            _vm.reorderMode
-                              ? "novaMultiselect.doneReordering"
-                              : "novaMultiselect.reorder"
-                          )
-                        ) +
-                        "\n      "
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.field.reorderable
+                  ? _c(
+                      "div",
+                      {
+                        staticClass:
+                          "ml-auto mt-2 text-sm font-bold text-primary cursor-pointer dim",
+                        on: {
+                          click: function($event) {
+                            _vm.reorderMode = !_vm.reorderMode
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n        " +
+                            _vm._s(
+                              _vm.__(
+                                _vm.reorderMode
+                                  ? "novaMultiselect.doneReordering"
+                                  : "novaMultiselect.reorder"
+                              )
+                            ) +
+                            "\n      "
+                        )
+                      ]
                     )
-                  ]
-                )
-              : _vm._e()
-          ],
-          1
-        )
+                  : _vm._e()
+              ],
+              1
+            )
       ])
     ],
     2
@@ -32602,70 +32677,47 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return !_vm.isEmpty
-    ? _c(
-        "div",
-        { staticClass: "relative rounded-lg bg-white shadow border border-60" },
-        [
-          _c(
-            "div",
-            { staticClass: "overflow-hidden rounded-b-lg rounded-t-lg" },
-            [
-              !_vm.groupRelations
-                ? _c(
-                    "div",
-                    _vm._l(_vm.values, function(value, i) {
-                      return _c(
-                        "div",
-                        {
-                          key: i,
-                          staticClass:
-                            "border-b border-50 cursor-text font-mono text-sm py-2 px-4"
-                        },
-                        [_vm._v("\n\t\t\t\t" + _vm._s(value) + "\n\t\t\t")]
-                      )
-                    }),
-                    0
-                  )
-                : _c(
-                    "div",
-                    _vm._l(_vm.values, function(options, group) {
-                      return _c(
-                        "div",
-                        {
-                          key: group,
-                          staticClass:
-                            "border-b border-50 cursor-text font-mono text-sm py-2 px-4"
-                        },
-                        [
-                          _vm._v("\n\t\t\t\t" + _vm._s(group) + "\n\t\t\t\t"),
-                          _vm._l(options, function(option, i) {
-                            return _c(
-                              "div",
-                              {
-                                key: i,
-                                staticClass:
-                                  "cursor-text font-mono text-xs py-1 px-4",
-                                class: i == 0 ? "pt-2" : ""
-                              },
-                              [
-                                _vm._v(
-                                  "\n\t\t\t\t\t" +
-                                    _vm._s(option.label) +
-                                    "\n\t\t\t\t"
-                                )
-                              ]
-                            )
-                          })
-                        ],
-                        2
-                      )
-                    }),
-                    0
-                  )
-            ]
-          )
-        ]
-      )
+    ? _c("div", {}, [
+        _c("div", { staticClass: "multiselect-readonly" }, [
+          _vm.groupRelations
+            ? _c(
+                "div",
+                {},
+                _vm._l(_vm.values, function(g, label) {
+                  return _c("div", [
+                    _c("div", { staticClass: "group-label" }, [
+                      _vm._v(_vm._s(label))
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "ul",
+                      { staticClass: "grouped-list" },
+                      _vm._l(g, function(s) {
+                        return _c("li", [
+                          _vm._v(
+                            "\n            " + _vm._s(s.label) + "\n          "
+                          )
+                        ])
+                      }),
+                      0
+                    )
+                  ])
+                }),
+                0
+              )
+            : _c("div", {}, [
+                _c(
+                  "ul",
+                  _vm._l(_vm.values, function(s) {
+                    return _c("li", [
+                      _vm._v("\n          " + _vm._s(s) + "\n        ")
+                    ])
+                  }),
+                  0
+                )
+              ])
+        ])
+      ])
     : _c("div", [_vm._v("—")])
 }
 var staticRenderFns = []
