@@ -181,21 +181,13 @@ export default {
     loadInitialValueFromRelationship() {
         let baseUrl = '/nova-vendor/nova-multiselect/';
         let queryParams = '?multiselect-resource=' + _.toString(this.resourceName) + '&multiselect-resource-id=' + _.toString(this.resourceId) + '&multiselect-via-resource=' + _.toString(this.viaResource) + '&multiselect-via-resource-id=' + _.toString(this.viaResourceId);
-        if (this.resourceId) {
-          Nova.request(baseUrl + this.resourceName + '/' + this.resourceId + '/attachable/' + this.field.attribute + queryParams)
-            .then((data) => {
-              this.fillOptionsFromRelationship(data);
-              this.value = _.map(data.data.selected, function (value) {
-                return _.clone(_.find(data.data.available, ['value', value]));
-              });
+        Nova.request(baseUrl + this.resourceName + '/attachable/' + this.field.attribute + queryParams)
+          .then((data) => {
+            this.fillOptionsFromRelationship(data);
+            this.value = _.map(this.field.value, function (value) {
+              return _.clone(_.find(data.data.available, ['value', value.id]));
             });
-        }
-        else {
-          Nova.request(baseUrl + this.resourceName + '/attachable/' + this.field.attribute + queryParams)
-            .then((data) => {
-              this.fillOptionsFromRelationship(data);
-            });
-        }
+          });
     },
 
     fillOptionsFromRelationship(data) {

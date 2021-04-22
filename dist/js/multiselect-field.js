@@ -379,19 +379,13 @@ __webpack_require__.r(__webpack_exports__);
 
       var queryParams = '?multiselect-resource=' + _.toString(this.resourceName) + '&multiselect-resource-id=' + _.toString(this.resourceId) + '&multiselect-via-resource=' + _.toString(this.viaResource) + '&multiselect-via-resource-id=' + _.toString(this.viaResourceId);
 
-      if (this.resourceId) {
-        Nova.request(baseUrl + this.resourceName + '/' + this.resourceId + '/attachable/' + this.field.attribute + queryParams).then(function (data) {
-          _this2.fillOptionsFromRelationship(data);
+      Nova.request(baseUrl + this.resourceName + '/attachable/' + this.field.attribute + queryParams).then(function (data) {
+        _this2.fillOptionsFromRelationship(data);
 
-          _this2.value = _.map(data.data.selected, function (value) {
-            return _.clone(_.find(data.data.available, ['value', value]));
-          });
+        _this2.value = _.map(_this2.field.value, function (value) {
+          return _.clone(_.find(data.data.available, ['value', value.id]));
         });
-      } else {
-        Nova.request(baseUrl + this.resourceName + '/attachable/' + this.field.attribute + queryParams).then(function (data) {
-          _this2.fillOptionsFromRelationship(data);
-        });
-      }
+      });
     },
     fillOptionsFromRelationship: function fillOptionsFromRelationship(data) {
       var self = this;
