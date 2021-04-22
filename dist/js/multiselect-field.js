@@ -133,9 +133,13 @@ __webpack_require__.r(__webpack_exports__);
 
       var queryParams = '?multiselect-resource=' + _.toString(this.resourceName) + '&multiselect-resource-id=' + _.toString(this.resourceId) + '&multiselect-via-resource=' + _.toString(this.viaResource) + '&multiselect-via-resource-id=' + _.toString(this.viaResourceId);
 
-      Nova.request(baseUrl + this.resourceName + '/' + this.resourceId + '/attachable/' + this.field.attribute + queryParams).then(function (data) {
+      Nova.request(baseUrl + this.resourceName + '/attachable/' + this.field.attribute + queryParams).then(function (data) {
+        var selected = _.map(_this.field.value, function (value) {
+          return value.id;
+        });
+
         if (_this.field.groupRelations) {
-          var relationshipValues = _.map(data.data.selected, function (value) {
+          var relationshipValues = _.map(selected, function (value) {
             return _.clone(_.find(data.data.available, ['value', value]));
           });
 
@@ -143,7 +147,7 @@ __webpack_require__.r(__webpack_exports__);
             return value.group;
           });
         } else {
-          _this.relationshipValues = _.map(data.data.selected, function (value) {
+          _this.relationshipValues = _.map(selected, function (value) {
             return _.clone(_.find(data.data.available, ['value', value])).label;
           });
         }
