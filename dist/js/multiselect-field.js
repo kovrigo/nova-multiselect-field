@@ -279,6 +279,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 
@@ -32410,7 +32413,7 @@ var render = function() {
     },
     [
       _c("template", { slot: "field" }, [
-        _vm.isReadonly
+        _vm.isReadonly && _vm.selected.length > 0
           ? _c("div", { staticClass: "flex flex-col multiselect-readonly" }, [
               _vm.isOptionGroups
                 ? _c(
@@ -32454,7 +32457,16 @@ var render = function() {
                     )
                   ])
             ])
-          : _c(
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.isReadonly && _vm.selected.length == 0
+          ? _c("div", { staticClass: "w-full h-full pt-2" }, [
+              _vm._v("\n      —\n    ")
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        !_vm.isReadonly
+          ? _c(
               "div",
               { staticClass: "flex flex-col" },
               [
@@ -32623,6 +32635,7 @@ var render = function() {
               ],
               1
             )
+          : _vm._e()
       ])
     ],
     2

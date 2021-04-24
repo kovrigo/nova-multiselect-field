@@ -1,7 +1,7 @@
 <template>
   <default-field :field="field" :errors="errors" :full-width-content="field.stacked">
     <template slot="field">
-      <div v-if="isReadonly" class="flex flex-col multiselect-readonly">
+      <div v-if="isReadonly && selected.length > 0" class="flex flex-col multiselect-readonly">
         <div class="w-full pt-2" v-if="isOptionGroups">
           <div v-for="(g, label) in readonlyValue">
             <div class="group-label">{{ label }}</div>
@@ -20,7 +20,10 @@
           </ul>          
         </div>
       </div>
-      <div class="flex flex-col" v-else>
+      <div v-if="isReadonly && selected.length == 0" class="w-full h-full pt-2">
+        &mdash;
+      </div>
+      <div v-if="!isReadonly" class="flex flex-col">
         <!-- Multi select field -->
         <multiselect
           v-if="!reorderMode"
